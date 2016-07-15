@@ -26,7 +26,8 @@ define([
         './CameraFlightPath',
         './MapMode2D',
         './PerspectiveFrustum',
-        './SceneMode'
+        './SceneMode',
+        './CameraFlightManager'
     ], function(
         BoundingSphere,
         Cartesian2,
@@ -54,7 +55,8 @@ define([
         CameraFlightPath,
         MapMode2D,
         PerspectiveFrustum,
-        SceneMode) {
+        SceneMode,
+        CameraFlightManager) {
     'use strict';
 
     /**
@@ -2470,6 +2472,7 @@ define([
      * @param {Matrix4} [options.endTransform] Transform matrix representing the reference frame the camera will be in when the flight is completed.
      * @param {Number} [options.maximumHeight] The maximum height at the peak of the flight.
      * @param {EasingFunction|EasingFunction~Callback} [options.easingFunction] Controls how the time is interpolated over the duration of the flight.
+     * @returns {CameraFlightManager} Manager that can be used to control started camera flight.
      *
      * @exception {DeveloperError} If either direction or up is given, then both are required.
      *
@@ -2588,7 +2591,8 @@ define([
         newOptions.easingFunction = options.easingFunction;
 
         var scene = this._scene;
-        scene.tweens.add(CameraFlightPath.createTween(scene, newOptions));
+        var tween = scene.tweens.add(CameraFlightPath.createTween(scene, newOptions));
+        return new CameraFlightManager(tween);
     };
 
     function distanceToBoundingSphere3D(camera, radius) {
